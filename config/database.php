@@ -57,11 +57,11 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', '127.0.0.1'),//$DATABASE_URL["host"],//env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),//$DATABASE_URL["port"],//env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'ciaca'),//ltrim($DATABASE_URL["path"], "/"),//env('DB_DATABASE', 'ciaca'),
-            'username' => env('DB_USERNAME', 'postgres'),//$DATABASE_URL["user"],//env('DB_USERNAME', 'postgres'),
-            'password' =>env('DB_PASSWORD', '12345'),//$DATABASE_URL["pass"],//env('DB_PASSWORD', '12345'),
+            'host' => $DATABASE_URL["host"],//$DATABASE_URL["host"],//env('DB_HOST', '127.0.0.1'),
+            'port' => $DATABASE_URL["port"],//$DATABASE_URL["port"],//env('DB_PORT', '5432'),
+            'database' => ltrim($DATABASE_URL["path"],//ltrim($DATABASE_URL["path"], "/"),//env('DB_DATABASE', 'ciaca'),
+            'username' => $DATABASE_URL["user"],//$DATABASE_URL["user"],//env('DB_USERNAME', 'postgres'),
+            'password' =>$DATABASE_URL["pass"],//$DATABASE_URL["pass"],//env('DB_PASSWORD', '12345'),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
