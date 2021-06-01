@@ -1,0 +1,247 @@
+******INSTALAR APACHE*******
+(En caso de actualizar la versión de apache)
+Abrir el "Apache HTTP Server Monitor" Detener el servidor y cerrar el monitor. De esta manera podremos ir a C: y cambiar el nombre de la carpeta apache y aplicar las instrucciones de instalación para el nuevo apache actualizado.
+(verificar)
+En httpd.conf verificar el NameServer si tiene localhost
+Ya solo es necesario volver a correr el Apache HTTP Server Monitor
+
+(instalación limpia)
+**********Intalando C++**********
+- Descargamos C++ Redistributable for Visual Studio 2019 x64 (https://www.microsoft.com/es-es/download/details.aspx?id=48145)
+Todas las versiones (https://www.itechtics.com/microsoft-visual-c-redistributable-versions-direct-download-links/#Microsoft_Visual_C_Redistributable_2019)
+- Instalamos el ejecutable
+*********************************
+
+**********Instalando Apache**********
+- Descargamos los binarios de https://www.apachelounge.com/download/VC14/ (vc16 para windows10)
+- Descomprimimos
+- Pegamos en el disco C la carpeta apache
+
+- Abrimos una consola de comandos como administrador vamos a C/apache/bin/ y ejecutamos httpd.exe
+- En apache24/conf/httpd.conf verificar el ServerName si tiene localhost
+- Seleccionamos todas las redes y corremos
+
+- Probamos en el navegador (localhost)
+
+- Debemos instalar como servicio
+	- Primero cerramos el apache (ctr+c)
+	- Instalamos el servicio con cmd como administrador: 
+		abrimos una consola como administrador
+		vamos a apache24/bin/ y corremos:
+		httpd.exe -k install (aquí dará error pues no está inicializado)
+	- Corremos: services.msc
+	- Buscamos el servicio Apache2.4 y lo inicializamos
+
+Si se hace algún cambio posiblemente sea necesario detener el servicio en services.msc y volverlo a iniciar
+Podemos probar en consola con el httpd.exe
+
+
+- Ya tenemos el apacheMonitor para poderlo usar o crear un acceso directo
+
+Si estamos en Windows 10 Es conveniente remplazar los binarios y poner los de la versión VC14
+
+
+
+
+
+
+******INSTALAR PHP*******
+
+- Descargamos php desde la pagina php.net/downloads.php
+- Pendiente de que sea la versión  (((Thread Safe o Seguridad en los Hilos)))  (vc15 y x86)
+- Descomprimimos
+- Creamos una carpeta en C llamada php y copiamos todos los archivos descomprimidos ahí
+
+*****Configurar php**************
+******CONFIGURACIÓN*******
+
+
+- En la carpeta (C:/php/php.ini-development) y le cambiamos el nombre a (php.ini)
+
+Ojo Aveces la última versión de php no funciona del todo bien con el VC++ entonces hay que probar con una mas vieja
+
+al final del archivo httpd.conf cargamos el módulo de php con:
+	LoadModule php7_module "C:/php/php7apache2_4.dll"
+	AddType application/x-httpd-php .php
+	PHPiniDir "c:/php7"
+
+- Descomentar las lineas
+	extension_dir = "ext"
+	extension=php_pdo_.... según sea el caso... mysql, pgsql, etc
+
+
+usa el php.ini que descargaste NO LO SUSTITUYAS POR OTROS DE OTRAS VERSIONES PORQUE NO FUNCIONARÁ EL PHP
+
+- En la carpeta C:/apache/conf/httpd.conf
+	colocar un: Listen 127.0.0.1:80
+
+- Crear en C:/apache/htdocs/ un archivo llamado phpinfo.php
+	con la siguiente información:
+	<?php
+		phpinfo();
+	?>
+- Abrir localhost/phpinfo.php y verificar que todo está bien.
+
+- Si necesitas reiniciar el servidor php
+	reinicia el apache con apachemonitor
+
+
+
+
+
+
+
+
+******INSTALAR POSTGRES*******
+
+- Descargar el archivo binario desde la página https://www.postgresql.org/download/ especificamente (https://www.enterprisedb.com/download-postgresql-binaries)
+
+ojo Si la versión no es compatible descargue una menor.
+
+- Descomprimimos
+- Crear una carpeta con el nombre "data" dentro de la carpeta pgsql
+- Copiar la carpeta pgsql en C:
+- Abrir la consola cmd y entrar a C:/pgsql/bin
+- Correr initdb.exe -U postgres -A password -E utf8 -W -D C:\pgsql\data
+	usuario: postgres
+	clave: 12345
+
+
+	(-U) es el usuario Selecciona el nombre de usuario del superusuario de la base de datos. De manera predeterminada, este es el nombre del usuario efectivo que ejecuta initdb. Realmente no es importante cuál es el nombre del superusuario, pero uno puede optar por mantener el 		nombre habitual postgres, incluso si el nombre del usuario del sistema operativo es diferente.
+
+	(-A) password indica que la seguridad será mediante clave de acceso
+
+	(-E) Selecciona la codificación de la base de datos de la plantilla. Esta también será la codificación predeterminada de cualquier base de datos que cree más tarde, a menos que la anule allí. El valor predeterminado se deriva de la configuración regional, o SQL_ASCII si eso no 	funciona. Los juegos de caracteres soportados por el servidor 
+
+	(-D) Esta opción especifica el directorio donde se debe almacenar el clúster de la base de datos. Esta es la única información requerida 	por initdb, pero puede evitar escribirla configurando la variable de entorno PGDATA, lo que puede ser conveniente ya que el servidor de la 	base de datos (postgres) puede encontrar el directorio de la base de datos más adelante por la misma variable.
+
+	(-W) Hace que initdb solicite una contraseña para darle al superusuario de la base de datos. Si no planea usar la autenticación de contraseña, esto no es importante. De lo contrario, no podrá utilizar la autenticación de contraseña hasta que haya configurado una 		contraseña
+
+-iniciar o detener el servidor de bases de datos usamos:
+	pg_ctl -D ^"C^:^\pgsql^\data^" -l archivo_de_registro start
+	pg_ctl -D ^"C^:^\pgsql^\data^" -l archivo_de_registro stop
+
+- Nos conectamos con:
+	psql -h localhost -U postgres
+
+Vamos a listar las bases con el comando: \l
+a de psql: \q
+
+
+
+
+- Abrir una consola como administrador
+- Detener el servidor de pgsql
+- Registraos el servicio de postgres SQL como Postgresql_10.11
+	1) cd C:/pgsql/bin
+	2) pg_ctl.exe register -N Postgresql_12.1 -D "C:/pgsql/data"
+
+Si por alguna razón debes borrar el servicio:
+	sc delete Postgresql_12.1
+
+Puede dar un error referente a MSVCR120.dll y es por faltar VisualC++ 2013 (https://www.microsoft.com/es-ES/download/details.aspx?id=40784)
+
+- Verificamos el servicio creado con: (tecla windows + R)
+- Buscamos services.msc
+- Buscamos el servicio creado (Postgresql_12.1) y lo inicializamos
+
+
+- Descargamos la última versión del pgadmin de su página oficial(https://www.pgadmin.org/download/) (el .exe)
+
+- Instalamos y reiniciamos el computador
+La clave para Pgadmin 123456 (diferente al postgres)
+
+- Debemos cambiar al navegador por defecto Crhome o el que tengamos en uso.
+- Solo queda crear un servidor con el nombre postgreSQL12 y en la parte de conexión ponerle el usuario: postgres clave:12345
+
+
+**************************************************************
+
+- Instalar composer desde la página principal (https://getcomposer.org/download/)
+(como desarrollador <developer mode> para que pueda ser accedido desde cualquier directorio)
+- Para crear un proyecto 
+	create-project --prefer-dist laravel/laravel (nombre)
+
+
+- Instalar Heroku desde su página (https://www.heroku.com/)
+- Importante instalar el Heroku Cli (https://devcenter.heroku.com/articles/heroku-cli)
+Es el que nos va a permitir trabajar con heroku desde la consola
+
+- Instalar Git desde su página (https://git-scm.com/download/win)
+
+**************************************************************
+
+
+---------------------------------------
+---------------(Heroku)----------------
+---------------------------------------
+
+$ heroku login
+
+$ cd pruebaciaca
+$ heroku git:remote -a ciaca56
+
+$ git add .
+$ git commit -m "Comentario"
+$ git push heroku master
+
+
+-----------------------------------------
+-----------------------------------------
+
+- Estar pendiente de que el apache esté corriendo.
+
+- Clonar el repositorio de git en carpeta de htdocs de apache
+- Verificar el archivo .env para nuestra conexión en local y 
+dejar el database.php con la configuración para Heroku
+	Teniendo en cuenta que Laravel busca primero en el .env y sino 
+	funciona lo descarta y usa el database.php
+
+- Crerar la Base de Datos en Postgres de acuerdo al .env
+- INSTALAR paquetes o dependencias 
+	composer install
+	Para descargar e instalar las dependencias utilizadas por el proyecto
+
+
+
+
+
+
+
+
+******************************************
+Para clonar el sistema y ponerlo en blanco
+*******************************************
+
+Debemos ejecutar el seeder para los permisos y que así se cargue la tabla:
+	php artisan migrate:refresh --seed
+
+
+
+Solo un error tal vez insignificante y es que por usar php7
+
+instalar openssl
+https://slproweb.com/products/Win32OpenSSL.html
+
+Fue difícil lograr que el openssl fuera activado en php
+Por lo tanto optamos por instalar wamp y configurarlo con postgresql
+
+
+
+
+Registrar un usuario para crearlo
+
+Manipular la base de datos
+	Necesitamos un rol al menos (video 4 de roles y permisos en el pendrive)
+	debemos correr el seeder para productos----> php artisan db:seed
+	
+	Asignamos el permiso correcto (video 10 de roles y permisos en el pendrive)
+	INSERT INTO public.role_user(
+		id, role_id, user_id, created_at, updated_at)
+		VALUES (1,1, 1, Null, Null);
+
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+syctoy Lo usaremos para sincronizar en nuestro 
+caso el ciaca56 con el ciaca56-desarrollo3
